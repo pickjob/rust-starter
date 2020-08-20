@@ -1,0 +1,24 @@
+appenders:
+    stdout:
+        kind: console
+        encoder:
+            pattern: "{d(%Y-%m-%d %H:%M:%S)} [{l}] [{T}] {f}: {m}\n"
+    rolling-file:
+        kind: rolling_file
+        path: logs/info.log
+        encoder:
+            pattern: "{d(%Y-%m-%d %H:%M:%S)} [{l}] [{T}] {f}: {m}\n"
+        policy:
+            kind: compound
+            trigger:
+                kind: size
+                limit: 10 mb
+            roller:
+                kind: fixed_window
+                pattern: logs/info.{}.log
+                count: 5
+root:
+    level: info
+    appenders:
+        - stdout
+        - rolling-file
