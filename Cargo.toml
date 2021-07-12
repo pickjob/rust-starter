@@ -36,25 +36,29 @@ name = "generic-class"
 path = "examples/quirks/trait-object/generic-class.rs"
 
 [[example]]
-name = "arc"
-path = "examples/std/arc.rs"
-
-[[example]]
-name = "barrier"
-path = "examples/std/barrier.rs"
+name = "io"
+path = "examples/std/io.rs"
 
 [[example]]
 name = "fn"
 path = "examples/std/fn.rs"
 
 [[example]]
+name = "arc"
+path = "examples/std/concurrent/arc.rs"
+
+[[example]]
+name = "barrier"
+path = "examples/std/concurrent/barrier.rs"
+
+[[example]]
 name = "mpsc"
-path = "examples/std/mpsc.rs"
+path = "examples/std/concurrent/mpsc.rs"
 
 [[example]]
 name = "mutex"
-path = "examples/std/mutex.rs"
+path = "examples/std/concurrent/mutex.rs"
 
 [[example]]
 name = "rwlock"
-path = "examples/std/rwlock.rs"
+path = "examples/std/concurrent/rwlock.rs"
