@@ -5,35 +5,38 @@ name = "rust-starter"
 version = "0.1.0"
 
 [dependencies]
-async-std = "1.6.3"
-bytes = "1.0.0"
-futures = "0.3.5"
-log = "0.4.11"
-log4rs = {version = "1.0.0", features = ["gzip"]}
-rand = "0.8.2"
-threadpool = "1.8.1"
-tungstenite = "0.12.0"
-ureq = {version = "2.0.1", features = ["json", "charset"]}
+# Result包装
+anyhow = "*"
+# 异步支持
+futures = "*"
+# 字节流处理
+bytes = "*"
+# 编码
+hex = "*"
+base64 = "*"
+urlencoding = "*"
+# 序列化、反序列化
+serde = { version = "*", features = ["derive"] }
+serde_json = "*"
+serde_yaml = "*"
+serde_qs = "*"
+serde-transcode = "*"
+# 时间
+chrono = { version = "*", features = ["serde"] }
+# 日志
+log = { version = "*", features = ["max_level_trace", "release_max_level_info"] }
+fern = { version = "*", features = ["colored"] }
+# 随机数
+rand = "*"
+# 压缩
+flate2 = "*"
+# Http客户端
+ureq = {version = "2.0.1", features = ["charset", "json"]}
+
 
 [[example]]
-name = "rand"
-path = "examples/frame/rand.rs"
-
-[[example]]
-name = "threadpool"
-path = "examples/frame/threadpool.rs"
-
-[[example]]
-name = "tungstenite"
-path = "examples/frame/tungstenite.rs"
-
-[[example]]
-name = "ureq"
-path = "examples/frame/ureq.rs"
-
-[[example]]
-name = "generic-class"
-path = "examples/quirks/trait-object/generic-class.rs"
+name = "fmt"
+path = "examples/std/fmt.rs"
 
 [[example]]
 name = "io"
@@ -62,3 +65,43 @@ path = "examples/std/concurrent/mutex.rs"
 [[example]]
 name = "rwlock"
 path = "examples/std/concurrent/rwlock.rs"
+
+[[example]]
+name = "generic-class"
+path = "examples/quirks/trait-object/generic-class.rs"
+
+[[example]]
+name = "anyhow"
+path = "examples/frame/anyhow.rs"
+
+[[example]]
+name = "base64"
+path = "examples/frame/base64.rs"
+
+[[example]]
+name = "urlencoding"
+path = "examples/frame/urlencoding.rs"
+
+[[example]]
+name = "hex"
+path = "examples/frame/hex.rs"
+
+[[example]]
+name = "log"
+path = "examples/frame/log.rs"
+
+[[example]]
+name = "rand"
+path = "examples/frame/rand.rs"
+
+[[example]]
+name = "serde"
+path = "examples/frame/serde.rs"
+
+[[example]]
+name = "threadpool"
+path = "examples/frame/threadpool.rs"
+
+[[example]]
+name = "ureq"
+path = "examples/frame/ureq.rs"
