@@ -1,18 +1,15 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
 use flexi_logger::{
-    colored_with_thread, Age, Cleanup, Criterion, Duplicate, FileSpec, LevelFilter,
+    colored_detailed_format, Age, Cleanup, Criterion, Duplicate, FileSpec, LevelFilter,
     LogSpecification, Logger, Naming,
 };
-use log::{debug, error, info, trace, warn};
+use log::info;
 use std::error::Error;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    setup_logger()?;
-    trace!("Trace Message");
-    debug!("Debug Message");
-    info!("Info Message");
-    warn!("Warn Message");
-    error!("Error Message");
+#[async_std::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+    setup_logger().context(format!("Create logger failed"))?;
+    info!("Hello world!");
 
     Ok(())
 }
@@ -22,7 +19,7 @@ fn setup_logger() -> Result<()> {
     builder.default(LevelFilter::Trace);
     let logger = Logger::with(builder.build());
     logger
-        .format(colored_with_thread)
+        .format(colored_detailed_format)
         .duplicate_to_stdout(Duplicate::Trace)
         .log_to_file(
             FileSpec::default()

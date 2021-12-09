@@ -15,6 +15,8 @@ bytes = "*"
 hex = "*"
 base64 = "*"
 urlencoding = "*"
+# 正则
+regex = "*"
 # 序列化、反序列化
 serde = { version = "*", features = ["derive"] }
 serde_json = "*"
@@ -25,14 +27,27 @@ serde-transcode = "*"
 chrono = { version = "*", features = ["serde"] }
 # 日志
 log = { version = "*", features = ["max_level_trace", "release_max_level_info"] }
-fern = { version = "*", features = ["colored"] }
+flexi_logger = { version = "*", features = ["async", "specfile", "compress"] }
 # 随机数
 rand = "*"
 # 压缩
 flate2 = "*"
 # Http客户端
 ureq = {version = "2.0.1", features = ["charset", "json"]}
+# sqlite
+rusqlite = "*"
+# async-std
+async-std = {version = "*", features = ["attributes"]}
+# 异步函数递归调用
+async-recursion = "*"
 
+[[example]]
+name = "template"
+path = "examples/template.rs"
+
+[[example]]
+name = "template_async"
+path = "examples/template_async.rs"
 
 [[example]]
 name = "fmt"
@@ -91,6 +106,10 @@ name = "log"
 path = "examples/frame/log.rs"
 
 [[example]]
+name = "log2"
+path = "examples/frame/log2.rs"
+
+[[example]]
 name = "rand"
 path = "examples/frame/rand.rs"
 
@@ -105,3 +124,15 @@ path = "examples/frame/threadpool.rs"
 [[example]]
 name = "ureq"
 path = "examples/frame/ureq.rs"
+
+[[example]]
+name = "sqlite"
+path = "examples/frame/sqlite.rs"
+
+[[example]]
+name = "async_std"
+path = "examples/frame/async_std.rs"
+
+[[example]]
+name = "runtime_reflection_system"
+path = "examples/quirks/runtime_reflection_system.rs"
