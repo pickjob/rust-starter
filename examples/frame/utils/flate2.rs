@@ -1,15 +1,28 @@
 use anyhow::{Context, Result};
+use flate2::{read, Compression, GzBuilder};
 use flexi_logger::{
     colored_detailed_format, Age, Cleanup, Criterion, Duplicate, FileSpec, LevelFilter,
     LogSpecification, Logger, Naming,
 };
 use log::info;
-use std::error::Error;
+use std::{
+    error::Error,
+    fs::File,
+    io::{Read, Write},
+};
 
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     setup_logger().context(format!("Create logger failed"))?;
-    info!("Hello world!");
+    let mut encoder = GzBuilder::new()
+        .filename("hello_world.txt")
+        .comment("just show comment")
+        .write(File::create("logs/hello_world.gz")?, Compression::default());
+    encoder.write_all("Hello, world!".as_bytes())?;
+    encoder.finish()?;
+    let mut decoder = read::GzDecoder::new(File::open("logs/hello_world.gz")?);
+    let mut info = String::new();
+    decoder.read_to_string(&mut info)?;
+    info!("{}", info);
 
     Ok(())
 }

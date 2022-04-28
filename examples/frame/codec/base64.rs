@@ -5,11 +5,27 @@ use flexi_logger::{
 };
 use log::info;
 use std::error::Error;
+use std::str;
 
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     setup_logger().context(format!("Create logger failed"))?;
     info!("Hello world!");
+    let src = "Hello World! 你好，世界!";
+    info!("{}", base64::encode(src));
+    info!("{}", base64::encode_config(src, base64::STANDARD));
+    info!("{}", base64::encode_config(src, base64::STANDARD_NO_PAD));
+    info!("{}", base64::encode_config(src, base64::URL_SAFE));
+    info!("{}", base64::encode_config(src, base64::URL_SAFE_NO_PAD));
+    let dst = "SGVsbG8gV29ybGQhIOS9oOWlve+8jOS4lueVjCE";
+    info!("{}", str::from_utf8(&base64::decode(dst)?)?);
+    info!(
+        "{}",
+        str::from_utf8(&base64::decode_config(dst, base64::STANDARD)?)?
+    );
+    info!(
+        "{}",
+        str::from_utf8(&base64::decode_config(dst, base64::STANDARD_NO_PAD)?)?
+    );
 
     Ok(())
 }

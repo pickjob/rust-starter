@@ -4,12 +4,13 @@ use flexi_logger::{
     LogSpecification, Logger, Naming,
 };
 use log::info;
+use regex::Regex;
 use std::error::Error;
 
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     setup_logger().context(format!("Create logger failed"))?;
-    info!("Hello world!");
+    let re = Regex::new(r"^\d{4}-\d{2}-\d{2}$").unwrap();
+    assert!(re.is_match("2014-01-01"));
 
     Ok(())
 }

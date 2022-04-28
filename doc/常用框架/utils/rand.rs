@@ -23,4 +23,4 @@
 //              fn try_fill<R: Rng + ?Sized>(&mut self, rng: &mut R) -> Result<(), Error>;
 //          }
 //      function:
-//          rand::thread_rng
+//          rand::thread_rng() -> ThreadRng

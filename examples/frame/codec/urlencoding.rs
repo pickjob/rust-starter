@@ -6,10 +6,13 @@ use flexi_logger::{
 use log::info;
 use std::error::Error;
 
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     setup_logger().context(format!("Create logger failed"))?;
-    info!("Hello world!");
+    let src = "Hello World! 你好，世界!";
+    info!("{}", urlencoding::encode(src));
+
+    let dst = "Hello%20World%21%20%E4%BD%A0%E5%A5%BD%EF%BC%8C%E4%B8%96%E7%95%8C%21";
+    info!("{}", urlencoding::decode(dst)?);
 
     Ok(())
 }

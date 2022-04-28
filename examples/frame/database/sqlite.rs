@@ -4,26 +4,50 @@ use flexi_logger::{
     LogSpecification, Logger, Naming,
 };
 use log::info;
-use std::sync::{Arc, Barrier};
-use std::thread;
-use std::{error::Error, time::Duration};
-/**
- *  Barrier: 栅栏，线程间同步机制
- */
+use rusqlite::{params, Connection};
+use std::error::Error;
+
+#[derive(Debug)]
+struct Person {
+    id: i32,
+    name: String,
+    data: Option<Vec<u8>>,
+}
+
 fn main() -> Result<(), Box<dyn Error>> {
     setup_logger().context(format!("Create logger failed"))?;
+    let conn = Connection::open_in_memory()?;
 
-    let barrier = Arc::new(Barrier::new(10));
-    for _ in 0..10 {
-        let c = Arc::clone(&barrier);
-        thread::spawn(move || {
-            println!("before wait");
-            c.wait();
-            println!("after wait");
-        });
+    conn.execute(
+        "CREATE TABLE person (
+            id              INTEGER PRIMARY KEY,
+            name            TEXT NOT NULL,
+            data            BLOB
+            )",
+        [],
+    )?;
+    let me = Person {
+        id: 0,
+        name: "Steven".to_string(),
+        data: None,
+    };
+    conn.execute(
+        "INSERT INTO person (name, data) VALUES (?1, ?2)",
+        params![me.name, me.data],
+    )?;
+
+    let mut stmt = conn.prepare("SELECT id, name, data FROM person")?;
+    let person_iter = stmt.query_map([], |row| {
+        Ok(Person {
+            id: row.get(0)?,
+            name: row.get(1)?,
+            data: row.get(2)?,
+        })
+    })?;
+
+    for person in person_iter {
+        info!("Found person {:?}", person.unwrap());
     }
-    thread::sleep(Duration::new(5, 0));
-    println!("in the end ...");
 
     Ok(())
 }

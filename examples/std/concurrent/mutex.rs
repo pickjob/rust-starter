@@ -1,4 +1,9 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
+use flexi_logger::{
+    colored_detailed_format, Age, Cleanup, Criterion, Duplicate, FileSpec, LevelFilter,
+    LogSpecification, Logger, Naming,
+};
+use log::info;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::{error::Error, time::Duration};
@@ -9,23 +14,24 @@ use std::{error::Error, time::Duration};
  *      2. 手动调用 ste::memory::drop() 方法释放 Mutex
 */
 fn main() -> Result<(), Box<dyn Error>> {
+    setup_logger().context(format!("Create logger failed"))?;
     let lock = Arc::new(Mutex::new(0));
     for idx in 0..5 {
         let cloned_lock = lock.clone();
         thread::spawn(move || {
             let mut _guard = match cloned_lock.lock() {
                 Ok(guard) => {
-                    println!("Not posioned value: {:#?}", guard);
+                    info!("Not posioned value: {:#?}", guard);
                     guard
                 }
                 Err(poisoned) => {
                     // Posioned Mutex
-                    println!("Poisoned value: {:#?}", poisoned);
+                    info!("Poisoned value: {:#?}", poisoned);
                     // 相信数据正常继续执行
                     poisoned.into_inner()
                 }
             };
-            println!("guard value: {:#?}", _guard);
+            info!("guard value: {:#?}", _guard);
             if idx == 1 {
                 panic!("throw by cause");
             } else {
@@ -35,7 +41,33 @@ fn main() -> Result<(), Box<dyn Error>> {
         });
     }
     thread::sleep(Duration::new(5, 0));
-    println!("in the end ...");
+    info!("in the end ...");
+
+    Ok(())
+}
+
+fn setup_logger() -> Result<()> {
+    let mut builder = LogSpecification::builder();
+    builder.default(LevelFilter::Trace);
+    let logger = Logger::with(builder.build());
+    logger
+        .format(colored_detailed_format)
+        .duplicate_to_stdout(Duplicate::Info)
+        .log_to_file(
+            FileSpec::default()
+                .directory("logs")
+                .basename("app")
+                .suffix("log")
+                .suppress_timestamp()
+        )
+        .append()
+        .rotate(
+            Criterion::Age(Age::Day),
+            Naming::Timestamps,
+            Cleanup::KeepCompressedFiles(7),
+        )
+        .print_message()
+        .start()?;
 
     Ok(())
 }

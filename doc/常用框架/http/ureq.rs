@@ -35,7 +35,7 @@
 //              // 请求body相关
 //              pub fn call(self) -> Result<Response, Error>: no body
 //              pub fn send_form(self, data: &[(&str, &str)]) -> Result<Response, Error>: application/x-www-form-urlencoded
-//              pub fn send_json(self, data: SerdeValue) -> Result<Response, Error>: 发送JSON数据
+//              pub fn send_json(self, data: impl Serialize) -> Result<Response, Error>: 发送JSON数据
 //              pub fn send_string(self, data: &str) -> Result<Response, Error>: body为string
 //              pub fn send_bytes(self, data: &[u8]) -> Result<Response, Error>: body为bytes
 //              pub fn send(self, reader: impl Read) -> Result<Response, Error>: body未知, chunked发送

@@ -45,12 +45,10 @@
 //      SubAssign: -=
 //      Index: container[index]
 //      IndexMut: container[index]
-// 
 //      Drop
 //          pub trait Drop {
 //              pub fn drop(&mut self);
-//          }
-// 
+//          } 
 //      Deref: *v
 //          pub trait Deref {
 //              type Target: ?Sized;

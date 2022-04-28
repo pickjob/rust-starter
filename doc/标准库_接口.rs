@@ -42,4 +42,4 @@
 //      Sync语义标识(同步语义, 线程安全):
 //          pub unsafe auto trait Sync {}
 //      Unpin语义标识(UnPin语义, 可移动):
-//          pub auto trait Unpin { }
+//          pub auto trait Unpin {}

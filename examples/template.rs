@@ -19,13 +19,13 @@ fn setup_logger() -> Result<()> {
     let logger = Logger::with(builder.build());
     logger
         .format(colored_detailed_format)
-        .duplicate_to_stdout(Duplicate::Trace)
+        .duplicate_to_stdout(Duplicate::Info)
         .log_to_file(
             FileSpec::default()
                 .directory("logs")
                 .basename("app")
                 .suffix("log")
-                .suppress_timestamp(),
+                .suppress_timestamp()
         )
         .append()
         .rotate(

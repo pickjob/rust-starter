@@ -1,4 +1,9 @@
-use anyhow::Result;
+use anyhow::{Context, Result};
+use flexi_logger::{
+    colored_detailed_format, Age, Cleanup, Criterion, Duplicate, FileSpec, LevelFilter,
+    LogSpecification, Logger, Naming,
+};
+use log::info;
 use std::sync::{Arc, RwLock};
 use std::thread;
 use std::{error::Error, time::Duration};
@@ -10,6 +15,7 @@ use std::{error::Error, time::Duration};
  *      3. 都共享，写独占
  */
 fn main() -> Result<(), Box<dyn Error>> {
+    setup_logger().context(format!("Create logger failed"))?;
     let lock = Arc::new(RwLock::new(0));
     for idx in 0..5 {
         let cloned_lock = lock.clone();
@@ -37,6 +43,32 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     thread::sleep(Duration::new(5, 0));
     println!("in the end ...");
+
+    Ok(())
+}
+
+fn setup_logger() -> Result<()> {
+    let mut builder = LogSpecification::builder();
+    builder.default(LevelFilter::Trace);
+    let logger = Logger::with(builder.build());
+    logger
+        .format(colored_detailed_format)
+        .duplicate_to_stdout(Duplicate::Info)
+        .log_to_file(
+            FileSpec::default()
+                .directory("logs")
+                .basename("app")
+                .suffix("log")
+                .suppress_timestamp(),
+        )
+        .append()
+        .rotate(
+            Criterion::Age(Age::Day),
+            Naming::Timestamps,
+            Cleanup::KeepCompressedFiles(7),
+        )
+        .print_message()
+        .start()?;
 
     Ok(())
 }

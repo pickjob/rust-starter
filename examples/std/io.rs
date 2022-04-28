@@ -1,54 +1,50 @@
-use anyhow::Result;
-use std::env;
+use anyhow::{Context, Result};
+use flexi_logger::{
+    colored_detailed_format, Age, Cleanup, Criterion, Duplicate, FileSpec, LevelFilter,
+    LogSpecification, Logger, Naming,
+};
+use log::info;
 use std::error::Error;
-use std::fs;
-use std::path::PathBuf;
+use std::fs::File;
+use std::io::{BufRead, BufReader, Write};
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let key = "PATH";
-    let mut path_vec = Vec::new();
-    if let Some(paths) = env::var_os(key) {
-        for path in env::split_paths(&paths) {
-            if path.is_dir() {
-                path_vec.push(path);
-            }
-        }
-    }
-    if let Ok(cur_dir) = env::current_dir() {
-        path_vec.push(cur_dir);
-    }
-    let mut file_vec = Vec::new();
-    for p in path_vec {
-        walk_dirs(&mut file_vec, &p);
-    }
-    for p in file_vec {
-        println!("{}", p.display());
+    setup_logger().context(format!("Create logger failed"))?;
+    let mut file = File::create("logs/hello_world.txt")?;
+    file.write_all("Hello World!".as_bytes())?;
+    file.flush()?;
+    std::mem::drop(file);
+
+    let reader = BufReader::new(File::open("logs/hello_world.txt")?);
+    for l in reader.lines() {
+        info!("{}", l?);
     }
 
     Ok(())
 }
 
-fn walk_dirs(file_vec: &mut Vec<PathBuf>, path: &PathBuf) {
-    let dir = match fs::read_dir(path) {
-        Ok(d) => d,
-        Err(err) => {
-            println!("walk {} error with {:?}", path.display(), err);
-            return;
-        }
-    };
-    for dir_entry in dir {
-        let file_entry = match dir_entry {
-            Ok(f) => f,
-            Err(err) => {
-                println!("walk {} error with {:?}", path.display(), err);
-                return;
-            }
-        };
-        let file = file_entry.path();
-        if file.is_dir() {
-            walk_dirs(file_vec, &file);
-        } else {
-            file_vec.push(file);
-        }
-    }
+fn setup_logger() -> Result<()> {
+    let mut builder = LogSpecification::builder();
+    builder.default(LevelFilter::Trace);
+    let logger = Logger::with(builder.build());
+    logger
+        .format(colored_detailed_format)
+        .duplicate_to_stdout(Duplicate::Info)
+        .log_to_file(
+            FileSpec::default()
+                .directory("logs")
+                .basename("app")
+                .suffix("log")
+                .suppress_timestamp(),
+        )
+        .append()
+        .rotate(
+            Criterion::Age(Age::Day),
+            Naming::Timestamps,
+            Cleanup::KeepCompressedFiles(7),
+        )
+        .print_message()
+        .start()?;
+
+    Ok(())
 }

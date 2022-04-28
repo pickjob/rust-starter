@@ -2,6 +2,7 @@
 //      命名:
 //          Types / Traits / Enum variants: UpperCamelCase
 //          Modules / Methods / Functions / Macros / Local variables: snake_case
+//          使用 mut、move、ref 方法后缀提示参数可变性
 //      prefer using the borrowed type over borrowing the owned type
 //          &str over &String
 //          &[T] over &Vec<T>
@@ -19,54 +20,15 @@
 //          type FnPtr = fn() -> String;
 //      prefer using Fn trait objects
 //      concatenating strings with format!
-
-//      Convert:
-//          as_(std::convert::AsRef, std::convert::AsMut): Free
-//          into_(std::convert::From, std::convert::Into): Variable
-//          to_(std::borrow::ToOwned): Expensive
-//          usage:
-//                  str.as_bytes(): str => &[u8]
-//                  str.as_bytes_mut(): str => &mut [u8]
-//                  str.to_owned(): str => String
-//                  str::from_utf8(): &[u8] => &str
-//                  str::from_utf8_mut(): &mut [u8] => &mut str
-// 
-//                  String.as_bytes(): String => &[u8]
-//                  String.as_str(): String => &str
-//                  String.as_mut_str(): String => &mut str
-//                  String::as_ref(): String => [u8]
-//                  String.into_bytes(): String => Vec<u8>
-//                  String.borrow(): String => &str
-//                  String.borrow_mut(&mut self): String =>&mut str
-//                  String::from_utf8_lossy(): &[u8] => Cow<'_, str>
-// 
-//                  Path.to_owned(): Path => PathBuf
-//      Deref:
-//          Vec<T> impl Deref<Target = [T]>
-//          String impl Deref<Target = str> 
-//          PathBuf impl Deref<Path>
-// 
-//          Rc<T> impl<T> Deref<Target = T> where T: ?Sized, 
-//          Arc<T> impl<T> Deref for where T: ?Sized,
-//          Box<T> impl<T> Deref<Target = T> where T: ?Sized,
-//          Cow<T> impl<T> Deref<Target = T> where T: ToOwned + ?Sized, 
-//      Default:
-//          String impl Default
-//          Option<T> impl<T> Default
-// 
-//          Rc<T> impl<T> Default where T: Default, 
-//          Arc<T> impl<T> Default where T: Default, 
-//          Box<[T]> impl<T> Default
-//          Cell<T> impl<T> Default where T: Default, 
-//          RefCell<T> impl<T> Default where T: Default, 
-//          Cow<T> impl Default where T: ToOwned + ?Sized, <B as ToOwned>::Owned: Default,
-//  
-//          Vec<T>, HashMap<K, V>, VecDeque<T> impl Default
-//      Iterator:
-//          fn iter(&self) -> Iter             // Iter implements Iterator<Item = &U>
-//          fn iter_mut(&mut self) -> IterMut  // IterMut implements Iterator<Item = &mut U>
-//          fn into_iter(self) -> IntoIter     // IntoIter implements Iterator<Item = U>Fiter
-// 
+//      惯例:
+//          new: 构造器, 参数 no self, >= 1
+//          with_...: 可选构造器, 参数 no self, >= 1
+//          from_...: 转换接口, 参数 >=1
+//          into_...: 可能昂贵转换接口, 参数 self
+//          as_...: 轻松转换接口, 参数&self
+//          to_...: 昂贵转换接口, 参数&self
+//          is_...: 判断, 返回bool, 参数 &self or none
+//          has_...: 判断, 返回bool, 参数 &self or none
 
 fn main() {
     // if-else

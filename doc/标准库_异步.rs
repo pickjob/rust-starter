@@ -20,4 +20,13 @@
 // futures::
 //      macros:
 //          futures::join!: 等待所有异步任务结束
-//          
+//
+// 异步系统:
+//      异步函数:
+//          async fn do_something() {
+//              // something
+//          }
+//          .wait: 异步函数阻塞
+//      执行器: 异步任务执行环境
+//      Pin<Box<T>>
+//          std::marker::PhantomPinned: 不可Pin

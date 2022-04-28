@@ -4,12 +4,15 @@ use flexi_logger::{
     LogSpecification, Logger, Naming,
 };
 use log::info;
+use rayon::prelude::*;
 use std::error::Error;
 
-#[async_std::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     setup_logger().context(format!("Create logger failed"))?;
-    info!("Hello world!");
+
+    let vec = vec![1, 2, 3, 4, 5];
+    let sum: i32 = vec.par_iter().map(|i| i * i).sum();
+    info!("result: {}", sum);
 
     Ok(())
 }
